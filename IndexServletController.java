@@ -3,18 +3,22 @@ package com.arikaran;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class IndexServletController {
-	
-     @RequestMapping("index")
-    // @ResponseBody
-	public String index(String name,HttpSession session) {
-    	 System.out.println("HEllo world");
-    	 session.setAttribute("username", name);
-		return "index.jsp";
+    @RequestMapping("/index")
+   // @ResponseBody
+	public ModelAndView index(@RequestParam("name")String uname,HttpSession session) {
+		
+    	ModelAndView mav = new ModelAndView();
+    	mav.addObject("username",uname);
+    	mav.setViewName("index");
+    	session.setAttribute("username", uname);
+		//return "index"; //separation of concern
+    	return mav;
 	}
 }
