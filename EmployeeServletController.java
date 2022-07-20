@@ -1,5 +1,8 @@
 package com.arikaran.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,38 +10,45 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.arikaran.model.Employee;
+import com.arikaran.service.EmployeeService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @RestController
+@RequestMapping("api/ak")
 public class EmployeeServletController {
-	@Value("${app.name}")
-	private String appName;
-	@Value("${app.version}")
-	@JsonProperty("App_Version")
-	private String version;
+	@Autowired
+	EmployeeService empService;
+	
+	
 
 	@GetMapping("/employees")
 	public String getDetails() {
 		
 		return "Employee details fetching";
 	}
-	@GetMapping("/appinfo")
-	public String getAppDetails() {
-		return appName+" "+version;
+	@GetMapping("/employeelist")
+	public List<Employee> getEmployee(){
+		return empService.getEmployee();
+	}
+	{
+		
 	}
 	
-	  @GetMapping("/employees/{id}") public String
-	  getEmployee(@PathVariable("id")int id) { return
-	 "Fetching employee with id : "+id; }
+	
+	  @GetMapping("/employee/{id}")
+	  public Employee getEmployee(@PathVariable("id")int id) {
+		 return  empService.getSingleEmployee(id);
+	  }
 	 
 	
 	@DeleteMapping("/employees/{id}")
-	public String deleteEmployee(@PathVariable("id")int id) {
-		return "deleted the employee with id: "+id;
+	public void deleteEmployee(@PathVariable("id")int id) {
+		empService.deleteByid(id);
 	}
 	@GetMapping("/employee")
 	public String getEmployeeInfo(String name) {
@@ -51,13 +61,17 @@ public class EmployeeServletController {
 		
 		
 	}
+	@PostMapping("/saveemployee")
+	public Employee saveEmployee(@RequestBody Employee e) {
+		return empService.SaveEmployee(e);
+		
+	}
 	@PostMapping("/emp")
 	public String postEmployee(@RequestBody Employee e) {
 		return "Employee details : "+e;
 	}
-	@PutMapping("employee/{id}")
-	public Employee putEmployee(@PathVariable("id")int id,@RequestBody Employee e) {
-		System.out.println("Employee updated");
-		return e;
+	@PutMapping("/updateemp")
+	public Employee updateemp(@RequestBody Employee e) {
+		return empService.updateEmployee(e);
 	}
 }
